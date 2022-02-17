@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/brenogmrs/go-gin-api/database"
@@ -29,12 +30,63 @@ func ShowBook(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(404, gin.H{
-			"error": "Book not found" + err.Error(),
+			"error": err.Error(),
 		})
 
 		return
 	}
 
 	c.JSON(200, foundBook)
+
+}
+
+func CreateBook(c *gin.Context) {
+
+	db := database.GetDatabase()
+
+	var book models.Book
+
+	err := c.ShouldBindJSON(&book)
+
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": "Something went wrong" + err.Error(),
+		})
+
+		return
+	}
+
+	fmt.Println(book)
+
+	err = db.Create(&book).Error
+
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": "Cannot Create book" + err.Error(),
+		})
+
+		return
+	}
+
+	c.JSON(200, book)
+}
+
+func ShowBooks(c *gin.Context) {
+
+	db := database.GetDatabase()
+
+	var books []models.Book
+
+	err := db.Find(&books).Error
+
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": "Cannot List book" + err.Error(),
+		})
+
+		return
+	}
+
+	c.JSON(200, books)
 
 }
