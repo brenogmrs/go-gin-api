@@ -4,6 +4,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/brenogmrs/go-gin-api/database/migrations"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -28,6 +29,7 @@ func StartDB() {
 	config.SetMaxOpenConns(100)
 	config.SetConnMaxLifetime(time.Hour)
 
+	migrations.RunMigrations(db)
 }
 
 func GetDatabase() *gorm.DB {
